@@ -10,4 +10,5 @@ import lombok.Setter;
 public class Store {
     private String code;
     private String name;
+
 }

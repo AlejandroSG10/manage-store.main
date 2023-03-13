@@ -3,6 +3,7 @@ package co.edu.umanizales.manage_store.controller;
 import co.edu.umanizales.manage_store.controller.dto.ErrorDTO;
 import co.edu.umanizales.manage_store.controller.dto.ResponseDTO;
 import co.edu.umanizales.manage_store.controller.dto.SaleDTO;
+import co.edu.umanizales.manage_store.controller.dto.StoreXCantDTO;
 import co.edu.umanizales.manage_store.model.Sale;
 import co.edu.umanizales.manage_store.model.Seller;
 import co.edu.umanizales.manage_store.model.Store;
@@ -105,11 +106,33 @@ public class SaleController {
         int findSale = saleService.getTotalSales();
         if (findSale != 0){
         return new ResponseEntity<>(new ResponseDTO(
-                200,saleService.getTotalSales()/(float)sellerService.getSellers().size(),
+                200,
+                saleService.getTotalSales()/(float)sellerService.getSellers().size(),
                 null),HttpStatus.OK);
         }
         else
             return new ResponseEntity<>(new ResponseDTO(
                     409, "No hay ventas", null),HttpStatus.BAD_REQUEST);
+    }
+
+    public StoreXCantDTO getCant(int cant){
+        int sales;
+        Store store;
+        StoreXCantDTO StoreCant = new StoreXCantDTO(new Store("1","Pereira"),0);
+        for (int i = 0; 1 == storeService.getStores().size(); i++){
+            store = storeService.getStores().get(i);
+            String cod = store.getCode();
+            sales = getTotalSalesByStore(cod).getStatusCodeValue();
+            if (sales > cant){
+                StoreCant = new StoreXCantDTO(store, sales);
+            }
+        }
+        return StoreCant;
+    }
+
+    @GetMapping(path = "/storexcantmoreone/{cant}")
+    public ResponseEntity<ResponseDTO> getStoresCant(@PathVariable int cant){
+        return new ResponseEntity<>(new ResponseDTO(
+                200, getCant(cant), null),HttpStatus.OK);
     }
 }
